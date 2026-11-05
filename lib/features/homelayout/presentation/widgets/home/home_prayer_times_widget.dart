@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../config/routes/app_router.dart';
@@ -8,6 +9,7 @@ import '../../bloc/homelayout_bloc.dart';
 import '../../bloc/homelayout_event.dart';
 import '../../bloc/homelayout_state.dart';
 import 'home_prayer_row_widget.dart';
+import 'home_prayer_times.ui-tuning-lab.dart';
 
 class HomePrayerTimesWidget extends StatelessWidget {
   const HomePrayerTimesWidget({super.key});
@@ -64,9 +66,28 @@ class HomePrayerTimesWidget extends StatelessWidget {
             ],
           ),
           12.ver,
-          BlocBuilder<HomelayoutBloc, HomelayoutState>(
-            builder: (context, state) {
-              return Container(
+          _uiTuningLabHost(
+            BlocBuilder<HomelayoutBloc, HomelayoutState>(
+              builder: (context, state) =>
+                  _buildOriginal(context, state, isDark),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Debug builds only: kDebugMode is a compile-time constant, so release AOT
+  // builds drop the host and the lab file. Removed at landing.
+  Widget _uiTuningLabHost(Widget child) =>
+      kDebugMode ? UITuningLabHost(child: child) : child;
+
+  Widget _buildOriginal(
+    BuildContext context,
+    HomelayoutState state,
+    bool isDark,
+  ) {
+    return Container(
                 decoration: BoxDecoration(
                   color: isDark
                       ? AppColors.darkCardUnselected
@@ -109,11 +130,6 @@ class HomePrayerTimesWidget extends StatelessWidget {
                     );
                   }),
                 ),
-              );
-            },
-          ),
-        ],
-      ),
     );
   }
 }
