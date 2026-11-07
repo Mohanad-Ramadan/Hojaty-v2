@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +7,6 @@ import '../bloc/homelayout_event.dart';
 import '../bloc/homelayout_state.dart';
 import '../widgets/athkar/athkar_grid_view.dart';
 import '../widgets/shared/exit_app_dialog.dart';
-import '../widgets/home/home_bottom_nav_bar.ui-tuning-lab.dart';
 import '../widgets/home/home_bottom_nav_bar_widget.dart';
 import '../widgets/home/home_dashboard_view.dart';
 import '../widgets/occasions/occasions_tab_view.dart';
@@ -66,29 +64,18 @@ class _HomelayoutPageState extends State<HomelayoutPage> {
           },
           child: Scaffold(
             body: IndexedStack(index: state.currentTabIndex, children: tabs),
-            bottomNavigationBar: _bottomNavBar(context, state.currentTabIndex),
+            bottomNavigationBar: HomeBottomNavBarWidget(
+              currentIndex: state.currentTabIndex,
+              onTabSelected: (index) {
+                context.read<HomelayoutBloc>().add(
+                  ChangeBottomNavTabEvent(index),
+                );
+              },
+            ),
           ),
         );
       },
     );
-  }
-
-  Widget _bottomNavBar(BuildContext context, int currentIndex) {
-    void onTabSelected(int index) =>
-        context.read<HomelayoutBloc>().add(ChangeBottomNavTabEvent(index));
-    final bar = HomeBottomNavBarWidget(
-      currentIndex: currentIndex,
-      onTabSelected: onTabSelected,
-    );
-    // Debug builds only: kDebugMode is a compile-time constant, so release AOT
-    // builds drop the host and the lab file. Removed at landing.
-    return kDebugMode
-        ? UITuningLabNavHost(
-            currentIndex: currentIndex,
-            onTabSelected: onTabSelected,
-            child: bar,
-          )
-        : bar;
   }
 }
 
